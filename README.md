@@ -1,8 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Recruiting Platform
+
+A modern recruiting platform powered by AI to find the right jobs, candidates, and matches in seconds.
+
+This is a [Next.js](https://nextjs.org) project built with TypeScript, Tailwind CSS, and modern authentication features.
+
+## Features
+
+- 🤖 AI-powered job matching
+- 🔐 Secure authentication system with login/signup
+- 🎨 Modern, responsive design
+- 📱 Mobile-friendly interface
+- 🚀 Fast performance with Next.js 15
+- 🎯 Smart candidate-job matching algorithms
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -16,18 +39,60 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── (auth)/           # Authentication pages
+│   │   ├── login/        # Login page with form
+│   │   ├── signup/       # Signup page
+│   │   └── home/         # Authenticated home
+│   ├── about/            # About page
+│   ├── dashboard/        # Dashboard page
+│   ├── products/         # Products pages
+│   └── page.tsx          # Landing page
+├── public/
+│   └── assets/           # Images and static assets
+```
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework:** Next.js 15 with App Router
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Font:** Inter (Google Fonts)
+- **Authentication:** Custom form-based auth
+- **Image Optimization:** Next.js Image component
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Landing Page** (`/`) - Welcome page with platform overview
+- **Login** (`/login`) - User authentication with email/password and Google sign-in
+- **Signup** (`/signup`) - User registration
+- **Home** (`/home`) - Authenticated user dashboard
+- **About** (`/about`) - Platform information
+- **Dashboard** (`/dashboard`) - Analytics and management
+- **Products** (`/products`) - AI platform features and services
+
+## Development
+jbaskjdbaksjdbkjasdbkjb
+You can start editing the pages by modifying files in the `src/app/` directory. The page auto-updates as you edit the file.
+
+The project uses modern Next.js features:
+- App Router for file-based routing
+- Server and Client Components
+- TypeScript for type safety
+- Tailwind CSS for styling
+- Image optimization with next/image
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## Deploy on Vercel
 
