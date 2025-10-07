@@ -79,7 +79,7 @@ src/
 jbaskjdbaksjdbkjasdbkjb
 You can start editing the pages by modifying files in the `src/app/` directory. The page auto-updates as you edit the file.
 
-The project uses modern Next.js features:
+The project uses modern Next.js features:fthggfhdfgh
 - App Router for file-based routing
 - Server and Client Components
 - TypeScript for type safety
