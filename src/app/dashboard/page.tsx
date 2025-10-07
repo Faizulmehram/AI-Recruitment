@@ -1,4 +1,6 @@
-﻿import Sidebar from "../../components/Sidebar";
+﻿
+"use client";
+import Sidebar from "../../components/Sidebar";
 import SearchBar from "../../components/SearchBar";
 
 export default function DashboardPage() {
@@ -83,11 +85,30 @@ export default function DashboardPage() {
                     <label className="block text-sm font-medium text-gray-900 mb-2">
                       Upload CV
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-10.5 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-900">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-15 text-center">
+                      <div
+                        className="flex flex-col items-center justify-center text-gray-900"
+                        onDragOver={e => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add('bg-gray-100'); }}
+                        onDragLeave={e => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove('bg-gray-100'); }}
+                        onDrop={e => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.remove('bg-gray-100');
+                          const files = e.dataTransfer.files;
+                          if (files && files[0]) {
+                            alert(`Selected CV: ${files[0].name}`);
+                          }
+                        }}
+                        onDragEnter={e => { e.preventDefault(); e.stopPropagation(); }}
+                      >
                         <img src="/assets/dashboard/vectors/upload.svg" alt="Upload" className="w-8 h-8 mb-2" />
-                        <span className="text-sm">Drag & drop CV here, or <span className="font-semibold text-gray-900 cursor-pointer">browse here</span></span>
+                        <span className="text-sm">Drag & drop CV here, or <label htmlFor="cv-upload" className="font-semibold text-gray-900 cursor-pointer underline">browse here</label></span>
                         <span className="text-xs text-gray-500 mt-1">PDF, DOC, DOCX up to 10MB</span>
+                        <input id="cv-upload" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => {
+                          if (e.target.files && e.target.files[0]) {
+                            alert(`Selected CV: ${e.target.files[0].name}`);
+                          }
+                        }} />
                       </div>
                     </div>
                   </div>
@@ -141,6 +162,12 @@ export default function DashboardPage() {
                       <div className="flex flex-col items-center justify-center text-gray-900">
                         <img src="/assets/dashboard/vectors/upload.svg" alt="Upload" className="w-8 h-8 mb-2" />
                         <span className="text-sm">Upload <span className="font-semibold">Candidate</span> CV</span>
+                        <label htmlFor="candidate-cv-upload" className="font-semibold text-gray-900 cursor-pointer underline mt-2">Browse</label>
+                        <input id="candidate-cv-upload" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => {
+                          if (e.target.files && e.target.files[0]) {
+                            alert(`Selected Candidate CV: ${e.target.files[0].name}`);
+                          }
+                        }} />
                       </div>
                     </div>
                   </div>
