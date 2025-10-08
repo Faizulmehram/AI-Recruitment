@@ -1,222 +1,664 @@
-﻿
-"use client";
+﻿"use client";
+
+import { useState } from "react";
+import Image from "next/image";
 import Sidebar from "../../components/Sidebar";
 import SearchBar from "../../components/SearchBar";
 
-export default function DashboardPage() {
+/* ---------- small UI helpers ---------- */
+function SidebarItem({
+  icon,
+  label,
+  active = false,   
+}: { icon: string; label: string; active?: boolean }) {
   return (
-  <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+    <button
+      className={`group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[14px] ${
+        active ? "bg-[#0b1227] text-white" : "text-[#0f172a] hover:bg-slate-100"
+      }`}
+    >
+      <span className="inline-grid h-5 w-5 place-items-center">
+        <Image
+          src={`/assets/loginpage/dashboard/vectors/${icon}.svg`}
+          alt=""
+          width={18}
+          height={18}
+          className={active ? "invert" : ""}
+        />
+      </span>
+      <span className="font-medium">{label}</span>
+    </button>
+  );
+}
+
+function Tile({
+  title,
+  primary,
+  delta,
+}: { title: string; primary: string; delta: string }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
+      <div className="text-[34px] font-semibold leading-none tracking-tight">
+        {primary}
+      </div>
+  <div className="mt-1 text-[13px] text-slate-800 font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>{title}</div>
+      <div className={`mt-1 flex items-center gap-1 text-[12px] ${delta === '3% vs last 7d' ? 'text-red-500' : 'text-emerald-600'}`}>
+        {delta === '3% vs last 7d' ? (
+          <span className="inline-block align-middle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3,17l6.79-6.79a1,1,0,0,1,1.42,0l2.58,2.58a1,1,0,0,0,1.42,0L21,7" style={{fill: 'none', stroke: '#ef4444', strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2}}></path>
+              <polyline points="3 13 3 17 7 17" style={{fill: 'none', stroke: '#ef4444', strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2}}></polyline>
+            </svg>
+          </span>
+        ) : (
+          <span className="inline-block align-middle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21,7l-6.79,6.79a1,1,0,0,1-1.42,0l-2.58-2.58a1,1,0,0,0-1.42,0L3,17" style={{fill: 'none', stroke: '#10b981', strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2}}></path>
+              <polyline points="21 11 21 7 17 7" style={{fill: 'none', stroke: '#10b981', strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2}}></polyline>
+            </svg>
+          </span>
+        )}
+        <span>{delta}</span>
+      </div>
+    </div>
+  );
+}
+
+function SectionCard({
+  children,
+  title,
+  icon,
+}: { children: React.ReactNode; title: string; icon: string }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="mb-3 flex items-center gap-2 text-[15px] font-semibold">
+        <Image src={icon} alt="" width={18} height={18} />
+        <span>{title}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* ---------- page ---------- */
+export default function DashboardPage() {
+  const channelOptions = [
+    {
+      label: "LinkedIn",
+      logo: "/assets/dashboard/logos/Linkedin.png",
+    },
+    {
+      label: "X (Twitter)",
+      logo: "/assets/dashboard/logos/x%20logo.jpg",
+    },
+    {
+      label: "Email",
+      logo: "/assets/dashboard/logos/mail%20logo.jpg",
+    },
+    {
+      label: "Job Boards",
+      logo: "/assets/dashboard/logos/job_board_logo.png",
+    },
+  ];
+
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+
+  function handleChannelChange(label: string) {
+    setSelectedChannels((prev: string[]) => {
+      if (prev.includes(label)) {
+        return prev.filter((l: string) => l !== label);
+      } else {
+        return [...prev, label];
+      }
+    });
+  }
+  const candidateSources = [
+    { name: "LinkedIn", sub: "2.3M profiles" },
+    { name: "GitHub", sub: "890K profiles" },
+    { name: "News", sub: "45K profiles" },
+    { name: "Conferences", sub: "12K profiles" },
+  ];
+  // People images (spaces are URL-encoded)
+  const headshots = {
+    sarah:
+      "/assets/loginpage/dashboard/People/sarah%20chen.jpg",
+    alex:
+      "/assets/loginpage/dashboard/People/alex%20rodriguez.jpg",
+    emma:
+      "/assets/loginpage/dashboard/People/emma%20thompson.jpg",
+    james:
+      "/assets/loginpage/dashboard/People/james%20wilson.jpg",
+    maria:
+      "/assets/loginpage/dashboard/People/maria%20garcia.jpg",
+    // extra generic (kept for activity feed variety)
+    extra:
+      "/assets/loginpage/dashboard/People/1af2086220affecd5f498aeca93f64918a91bf86.jpg",
+  } as const;
+
+  const stats = [
+    { primary: "47", title: "Job Searches", delta: "12% vs last 7d" },
+    { primary: "124", title: "Candidate Searches", delta: "12% vs last 7d" },
+    { primary: "128", title: "Jobs Found", delta: "3% vs last 7d" },
+    { primary: "12", title: "Candidates Found", delta: "15% vs last 7d" },
+    { primary: "18", title: "Interviews", delta: "2 days vs last 30d" },
+    { primary: "73%", title: "Response Rate", delta: "5% vs last 7d" },
+  ];
+
+  const activity = [
+    {
+      tag: "candidate",
+      title: "New candidate applied — Senior React Developer",
+      body: "Applied via LinkedIn with 5+ years experience.",
+      by: "Sarah Chen",
+      time: "2 mins ago",
+      avatar: headshots.extra,
+    },
+    {
+      tag: "interview",
+      title: "Interview scheduled — Product Manager Role",
+      body: "Technical interview set for tomorrow 2:00 PM",
+      by: "Mike Johnson",
+      time: "15 mins ago",
+      avatar: headshots.extra,
+    },
+    {
+      tag: "job",
+      title: "Job posted — UX Designer Position",
+      body: "Posted to LinkedIn and company careers page",
+      by: "Lisa Wang",
+      time: "1 hour ago",
+      avatar: headshots.extra,
+    },
+    {
+      tag: "candidate",
+      title: "Candidate shortlisted — Backend Engineer",
+      body: "Moved to final interview stage",
+      by: "David Kim",
+      time: "2 hours ago",
+      avatar: headshots.extra,
+    },
+    {
+      tag: "interview",
+      title: "Interview completed — Data Scientist Role",
+      body: "Technical assessment completed successfully",
+      by: "Emma Thompson",
+      time: "3 hours ago",
+      avatar: headshots.extra,
+    },
+    {
+      tag: "job",
+      title: "Job application deadline — Frontend Developer",
+      body: "Application deadline reached – 47 applications received",
+      by: "System",
+      time: "4 hours ago",
+      avatar: headshots.extra,
+    },
+    {
+      tag: "candidate",
+      title: "Candidate profile — Marketing Manager",
+      body: "Added portfolio links and references",
+      by: "Tom Brown",
+      time: "5 hours ago",
+      avatar: headshots.extra,
+    },
+    {
+      tag: "interview",
+      title: "Interview rescheduled — DevOps Engineer Role",
+      body: "Moved from today to Friday due to candidate availability",
+      by: "Sarah Miller",
+      time: "6 hours ago",
+      avatar: headshots.extra,
+    },
+  ];
+
+  return (
+    <div className="flex" style={{ fontFamily: 'Inter, sans-serif' }}>
+      {/* sidebar */}
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-  <div className="p-4 md:p-8">
-          <SearchBar />
-          {/* Stats Boxes Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mt-6 w-full">
-            {/* Box 1 */}
-            <div className="h-[179px] bg-white rounded-[12px] border border-gray-200 flex flex-col items-start justify-center px-6 py-4 shadow">
-              <span className="text-[40px] font-semibold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>47</span>
-              <span className="text-[16px] text-gray-600 mt-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Job Searches</span>
-              <span className="text-green-600 text-[16px] font-normal mt-2 w-full text-center flex items-center justify-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: '100%' }}>
-                <img src="/assets/dashboard/up.svg" alt="Up" className="inline-block w-4 h-4 mr-1" style={{ filter: 'invert(41%) sepia(98%) saturate(749%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} /> 12% vs last 7d
-              </span>
-            </div>
-            {/* Box 2 */}
-            <div className="h-[179px] bg-white rounded-[12px] border border-gray-200 flex flex-col items-start justify-center px-6 py-4 shadow">
-              <span className="text-[40px] font-semibold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>124</span>
-              <span className="text-[16px] text-gray-600 mt-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Candidate Searches</span>
-              <span className="text-green-600 text-[16px] font-normal mt-2 w-full text-center flex items-center justify-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: '100%' }}>
-                <img src="/assets/dashboard/up.svg" alt="Up" className="inline-block w-4 h-4 mr-1" style={{ filter: 'invert(41%) sepia(98%) saturate(749%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} /> 12% vs last 7d
-              </span>
-            </div>
-            {/* Box 3 */}
-            <div className="h-[179px] bg-white rounded-[12px] border border-gray-200 flex flex-col items-start justify-center px-6 py-4 shadow">
-              <span className="text-[40px] font-semibold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>128</span>
-              <span className="text-[16px] text-gray-600 mt-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Jobs Found</span>
-              <span className="text-red-500 text-[16px] font-normal mt-2 w-full text-center flex items-center justify-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: '100%' }}>
-                <img src="/assets/dashboard/down.svg" alt="Down" className="inline-block w-4 h-4 mr-1" style={{ filter: 'invert(32%) sepia(98%) saturate(749%) hue-rotate(-20deg) brightness(90%) contrast(90%)' }} /> 3% vs last 7d
-              </span>
-            </div>
-            {/* Box 4 */}
-            <div className="h-[179px] bg-white rounded-[12px] border border-gray-200 flex flex-col items-start justify-center px-6 py-4 shadow">
-              <span className="text-[40px] font-semibold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>12</span>
-              <span className="text-[16px] text-gray-600 mt-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Candidates Found</span>
-              <span className="text-green-600 text-[16px] font-normal mt-2 w-full text-center flex items-center justify-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: '100%' }}>
-                <img src="/assets/dashboard/up.svg" alt="Up" className="inline-block w-4 h-4 mr-1" style={{ filter: 'invert(41%) sepia(98%) saturate(749%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} /> 15% vs last 7d
-              </span>
-            </div>
-            {/* Box 5 */}
-            <div className="h-[179px] bg-white rounded-[12px] border border-gray-200 flex flex-col items-start justify-center px-6 py-4 shadow">
-              <span className="text-[40px] font-semibold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>18</span>
-              <span className="text-[16px] text-gray-600 mt-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Interviews</span>
-              <span className="text-green-600 text-[16px] font-normal mt-2 w-full text-center flex items-center justify-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: '100%' }}>
-                <img src="/assets/dashboard/up.svg" alt="Up" className="inline-block w-4 h-4 mr-1" style={{ filter: 'invert(41%) sepia(98%) saturate(749%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} /> 2 days vs last 30d
-              </span>
-            </div>
-          </div>
-          {/* Main Content Grid - 2 boxes side by side beside activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 mt-8">
-            {/* Left: 2 boxes side by side, stack on mobile */}
-            <div className="lg:col-span-7 flex flex-col md:flex-row gap-4 md:gap-6 w-full">
-              {/* Job Search for Candidate */}
-              <div className="w-full md:w-1/2 bg-white p-4 md:p-6 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <img 
-                      src="/assets/dashboard/vectors/search.svg"
-                      alt="Search"
-                      width={24}
-                      height={24}
-                    />
-                    <h3 className="text-lg font-semibold text-gray-900">Job Search for Candidate</h3>
+
+      {/* main */}
+      <main className="mx-auto w-full max-w-[1200px] px-6 pb-16 pt-5">
+        {/* top bar */}
+        <SearchBar />
+
+        {/* stats */}
+        <div className="mt-6 grid grid-cols-6 gap-4 max-[1200px]:grid-cols-3 max-[760px]:grid-cols-2">
+          {stats.map((s) => (
+            <Tile key={s.title} {...s} />
+          ))}
+        </div>
+
+        {/* left (cards + schedule) | right (activity) */}
+        <div className="mt-6 grid grid-cols-[1fr_360px] gap-5 max-[1024px]:grid-cols-1">
+          {/* LEFT: two cards wide; schedule full width directly under them */}
+          <div className="grid grid-cols-2 gap-5 max-[760px]:grid-cols-1">
+            {/* Job Search for Candidate */}
+            <SectionCard
+              title="Job Search for Candidate"
+              icon="/assets/dashboard/vectors/job.svg"
+            >
+              <div className="space-y-4">
+                <div>
+                  <div className="text-[13px] font-medium text-slate-700">
+                    Describe the candidate or role
+                  </div>
+                  <textarea
+                    rows={3}
+                    placeholder="e.g., Senior React developer with 5+ years experience, looking for remote opportunities in fintech…"
+                    className="mt-2 w-full rounded-xl border border-slate-200 bg-white p-3 text-[13px] outline-none focus:ring-2 focus:ring-slate-200"
+                  />
+                </div>
+                <div>
+                  <div className="text-[13px] font-medium text-slate-700">
+                    Upload CV
+                  </div>
+                  <div className="mt-2 grid place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                    {/* Removed upload image from CV upload box */}
+                    <form>
+                      <label htmlFor="cv-upload" className="mt-3 block cursor-pointer text-[13px] text-slate-500">
+                        Drag & drop CV here, or <span className="text-sky-600 underline">browse here</span>
+                        <input
+                          id="cv-upload"
+                          name="cv-upload"
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          className="hidden"
+                          onChange={e => {
+                            if (e.target.files && e.target.files[0]) {
+                              alert(`Selected file: ${e.target.files[0].name}`);
+                            }
+                          }}
+                        />
+                      </label>
+                      <div className="text-[11px] text-slate-400 mt-1">
+                        PDF, DOC, DOCX up to 10MB
+                      </div>
+                    </form>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2" style={{ fontWeight: 550, fontFamily: 'Inter, sans-serif' }}>
-                      Describe the candidate or role
-                    </label>
-                    <textarea 
-                      className="w-full p-3 border border-gray-300 rounded-lg resize-none"
-                      rows={3}
-                      placeholder="e.g. React front-end developer with 5+ years of experience and knowledge in TypeScript"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Upload CV
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-15 text-center">
-                      <div
-                        className="flex flex-col items-center justify-center text-gray-900"
-                        onDragOver={e => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add('bg-gray-100'); }}
-                        onDragLeave={e => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove('bg-gray-100'); }}
-                        onDrop={e => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          e.currentTarget.classList.remove('bg-gray-100');
-                          const files = e.dataTransfer.files;
-                          if (files && files[0]) {
-                            alert(`Selected CV: ${files[0].name}`);
+                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                  <Image
+                    src="/assets/loginpage/dashboard/vectors/search.svg"
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
+                  Find Matching Jobs
+                </button>
+              </div>
+            </SectionCard>
+
+            {/* Candidate-to-Job Matching */}
+            <SectionCard
+              title="Candidate-to-Job Matching"
+              icon="/assets/dashboard/vectors/candidates.svg"
+            >
+              <div className="space-y-3">
+                <input
+                  className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[13px] outline-none focus:ring-2 focus:ring-slate-200"
+                  placeholder="Write job description…"
+                />
+                <div className="text-[12px] text-slate-500">Recent Jobs</div>
+                <div className="flex flex-wrap gap-2">
+                  {["Frontend Developer", "UX Designer", "Data Scientist"].map(
+                    (t) => (
+                      <button
+                        key={t}
+                        className="rounded-lg px-2 py-1 text-[11px] bg-[#0b1227] text-white transition duration-150 ease-in-out hover:bg-[#0f1a38] hover:scale-105 focus:outline-none"
+                        style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
+                      >
+                        {t}
+                      </button>
+                    )
+                  )}
+                </div>
+
+                <div className="mt-2 grid place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+                  {/* Removed upload image from CV upload box */}
+                  <form>
+                    <label htmlFor="candidate-cv-upload" className="mt-9 block cursor-pointer text-[13px] text-slate-500">
+                      Upload <span className="font-medium">Candidate</span> CV
+                      <span className="text-sky-600 underline"> (browse here)</span>
+                      <input
+                        id="candidate-cv-upload"
+                        name="candidate-cv-upload"
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        className="hidden"
+                        onChange={e => {
+                          if (e.target.files && e.target.files[0]) {
+                            alert(`Selected file: ${e.target.files[0].name}`);
                           }
                         }}
-                        onDragEnter={e => { e.preventDefault(); e.stopPropagation(); }}
+                      />
+                    </label>
+                    <div className="text-[11px] text-slate-400 mt-1">
+                      PDF, DOC, DOCX up to 10MB
+                    </div>
+                  </form>
+                </div>
+
+                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                  <Image
+                    src="/assets/loginpage/dashboard/vectors/play.svg"
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
+                  Run Ranking
+                </button>
+              </div>
+            </SectionCard>
+
+            {/* Candidate Search */}
+            <SectionCard
+              title="Candidate Search"
+              icon="/assets/dashboard/vectors/candidates.svg"
+            >
+              <div className="space-y-4">
+                <div>
+                  <div className="text-[13px] font-medium text-slate-700">
+                    Search Query
+                  </div>
+                  <input
+                    className="mt-2 w-full rounded-xl border border-slate-200 bg-white p-3 text-[13px] outline-none focus:ring-2 focus:ring-slate-200"
+                    placeholder="Search for candidates by role, skills, or keywords…"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {candidateSources.map((s, idx) => (
+                    <label
+                      key={s.name}
+                      htmlFor={`candidate-source-${idx}`}
+                      className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-3 text-[13px] shadow-[0_1px_0_#eef2f7] cursor-pointer transition hover:bg-slate-100 hover:scale-[1.03]"
+                      style={{ userSelect: 'none' }}
+                    >
+                      <input
+                        type="checkbox"
+                        id={`candidate-source-${idx}`}
+                        className="accent-[#0b1227]"
+                        style={{ pointerEvents: 'none' }}
+                      />
+                      <div>
+                        <div className="font-medium">{s.name}</div>
+                        <div className="text-[11px] text-slate-500">{s.sub}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+
+                <div className="text-[11px] text-slate-500">
+                  Active Sources{" "}
+                  <span className="ml-2 rounded-md bg-slate-100 px-2 py-[2px]">
+                    LinkedIn
+                  </span>
+                </div>
+
+                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                  <Image
+                    src="/assets/loginpage/dashboard/vectors/search.svg"
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
+                  Search Candidates
+                </button>
+              </div>
+            </SectionCard>
+
+            {/* Job Application Post */}
+            <SectionCard
+              title="Job Application Post"
+              icon="/assets/dashboard/vectors/paperplane.svg"
+            >
+              <div className="space-y-3">
+                <input
+                  className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[13px] outline-none focus:ring-2 focus:ring-slate-200"
+                  placeholder="Write job description…"
+                />
+
+                <div className="text-[12px] font-medium text-slate-700">
+                  Channels
+                </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {channelOptions.map((c, idx) => (
+                      <label
+                        key={c.label}
+                        htmlFor={`channel-checkbox-${idx}`}
+                        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer shadow-[0_1px_0_#eef2f7] transition hover:bg-slate-100 hover:scale-[1.03]"
+                        style={{ userSelect: 'none' }}
                       >
-                        <img src="/assets/dashboard/vectors/upload.svg" alt="Upload" className="w-8 h-8 mb-2" />
-                        <span className="text-sm">Drag & drop CV here, or <label htmlFor="cv-upload" className="font-semibold text-gray-900 cursor-pointer underline">browse here</label></span>
-                        <span className="text-xs text-gray-500 mt-1">PDF, DOC, DOCX up to 10MB</span>
-                        <input id="cv-upload" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => {
-                          if (e.target.files && e.target.files[0]) {
-                            alert(`Selected CV: ${e.target.files[0].name}`);
-                          }
-                        }} />
-                      </div>
-                    </div>
+                        <input
+                          type="checkbox"
+                          id={`channel-checkbox-${idx}`}
+                          className="accent-[#0b1227]"
+                          checked={selectedChannels.includes(c.label)}
+                          onChange={() => handleChannelChange(c.label)}
+                        />
+                        <Image
+                          src={c.logo}
+                          alt=""
+                          width={18}
+                          height={18}
+                          className="rounded"
+                        />
+                        <span className="text-[12px] font-medium">{c.label}</span>
+                      </label>
+                    ))}
                   </div>
-                  <button className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 w-full">
-                    <span className="flex items-center justify-center gap-2">
-                      <img src="/assets/dashboard/vectors/search.svg" alt="Search" className="w-5 h-5 filter invert" />
-                      Find Matching Jobs
-                    </span>
-                  </button>
+
+                <div className="text-[11px] text-slate-500">
+                  Active Sources:{" "}
+                  {selectedChannels.length === 0 ? null : (
+                    selectedChannels.map((label, i) => (
+                      <span key={label} className={`ml-${i > 0 ? 1 : 2} rounded-md bg-slate-100 px-2 py-[2px]`}>
+                        {label}
+                      </span>
+                    ))
+                  )}
                 </div>
+
+                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                  <Image
+                    src="/assets/dashboard/vectors/upload.svg"
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
+                  Generate and Post
+                </button>
               </div>
-              {/* Candidate-to-Job Matching */}
-              <div className="w-full md:w-1/2 bg-white p-4 md:p-6 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <img 
-                      src="/assets/dashboard/vectors/job.svg"
-                      alt="Candidate-to-Job Matching"
-                      width={24}
-                      height={24}
+            </SectionCard>
+
+            {/* Interview Schedule (FULL WIDTH, right under the four cards) */}
+            <div className="col-span-2">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-[15px] font-semibold">
+                    <Image
+                      src="/assets/loginpage/dashboard/vectors/interview.svg"
+                      alt=""
+                      width={18}
+                      height={18}
                     />
-                    <h3 className="text-lg font-semibold text-gray-900">Candidate-to-Job Matching</h3>
+                    Interview Schedule
                   </div>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-3" style={{ fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>
-                      Select Job
-                    </label>
-                    <input 
-                      type="text"
-                      className="w-full p-3 border border-gray-300 rounded-lg"
-                      placeholder="Write job description...."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Recent Jobs
-                    </label>
-                    <div className="flex gap-2">
-                      <span className="bg-gray-900 text-white px-3 py-1 rounded-lg text-sm font-medium">Frontend Developer</span>
-                      <span className="bg-gray-900 text-white px-3 py-1 rounded-lg text-sm font-medium">UX Designer</span>
-                      <span className="bg-gray-900 text-white px-3 py-1 rounded-lg text-sm font-medium">Data Scientist</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-3">
-                      Upload Candidate CV
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-900">
-                        <img src="/assets/dashboard/vectors/upload.svg" alt="Upload" className="w-8 h-8 mb-2" />
-                        <span className="text-sm">Upload <span className="font-semibold">Candidate</span> CV</span>
-                        <label htmlFor="candidate-cv-upload" className="font-semibold text-gray-900 cursor-pointer underline mt-2">Browse</label>
-                        <input id="candidate-cv-upload" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => {
-                          if (e.target.files && e.target.files[0]) {
-                            alert(`Selected Candidate CV: ${e.target.files[0].name}`);
-                          }
-                        }} />
-                      </div>
-                    </div>
-                  </div>
-                  <button className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 w-full">
-                    <span className="flex items-center justify-center gap-2">
-                      <img src="/assets/dashboard/vectors/play.svg" alt="Run Ranking" className="w-5 h-5 filter invert" />
-                      Run Ranking
-                    </span>
+                  <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-[12px]">
+                    Open Calendar ↗
                   </button>
                 </div>
-              </div>
-            </div>
-            {/* Right: Activity Panel */}
-            <div className="lg:col-span-5 w-full mt-4 lg:mt-0">
-              <div className="bg-white p-6 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-3">
-                    <img 
-                      src="/assets/dashboard/vectors/analytics.svg"
-                      alt="Analytics"
-                      width={24}
-                      height={24}
-                    />
-                    <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
-                  </div>
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    View All Activities →
-                  </button>
-                </div>
-                <div className="space-y-4">
-                  {/* Activity Items */}
-                  {/* ...existing activity items code... */}
-                  <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm">MC</div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-900">New candidate applied</span>
-                        <span className="text-xs text-gray-500">5m ago</span>
+
+                <div className="space-y-3">
+                  {[
+                    {
+                      name: "Sarah Chen",
+                      role: "Senior React Developer",
+                      when: "Today, 2:00 PM",
+                      badge: "Confirmed",
+                      avatar: headshots.sarah,
+                    },
+                    {
+                      name: "Alex Rodriguez",
+                      role: "Product Manager",
+                      when: "Today, 4:00 PM",
+                      badge: "Pending",
+                      avatar: headshots.alex,
+                    },
+                    {
+                      name: "Emma Thompson",
+                      role: "UX Designer",
+                      when: "Tomorrow, 10:00 AM",
+                      badge: "Confirmed",
+                      avatar: headshots.emma,
+                    },
+                    {
+                      name: "James Wilson",
+                      role: "Backend Engineer",
+                      when: "Tomorrow, 3:00 PM",
+                      badge: "Reschedule",
+                      avatar: headshots.james,
+                    },
+                    {
+                      name: "Maria Garcia",
+                      role: "Data Scientist",
+                      when: "Friday, 11:00 AM",
+                      badge: "No-show Risk",
+                      avatar: headshots.maria,
+                    },
+                  ].map((r, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between rounded-xl border border-slate-200 p-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src={r.avatar}
+                          alt=""
+                          width={38}
+                          height={38}
+                          className="rounded-full"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-[14px] font-medium">
+                              {r.name}
+                            </div>
+                            <span
+                              className={`rounded-md px-2 py-[2px] text-[11px] ${
+                                r.badge === "Confirmed"
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : r.badge === "Reschedule"
+                                  ? "bg-amber-50 text-amber-700"
+                                  : r.badge === "No-show Risk"
+                                  ? "bg-rose-50 text-rose-700"
+                                  : "bg-slate-100 text-slate-600"
+                              }`}
+                            >
+                              {r.badge}
+                            </span>
+                          </div>
+                          <div className="text-[12px] text-slate-500">
+                            {r.role}
+                          </div>
+                          <div className="text-[12px] text-slate-500">
+                            {r.when}
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-600">Maria Chen — React Developer</p>
+
+                      <div className="flex items-center gap-2">
+                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-[12px]">
+                          Join
+                        </button>
+                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-[12px]">
+                          Actions
+                        </button>
+                      </div>
                     </div>
+                  ))}
+                </div>
+
+                <div className="mt-3 flex items-center justify-between text-[12px] text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                    Synced with Google Calendar
                   </div>
-                  {/* ...other activity items... */}
+                  <button className="underline">Sync Settings</button>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* RIGHT: Recent Activity */}
+          <aside className="space-y-5 max-[1024px]:order-first max-[1024px]:sticky max-[1024px]:top-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="mb-3 flex items-center gap-2 text-[15px] font-semibold">
+                <Image
+                  src="/assets/loginpage/dashboard/vectors/analytics.svg"
+                  alt=""
+                  width={18}
+                  height={18}
+                />
+                Recent Activity
+              </div>
+
+              <div className="mb-3 flex items-center gap-2 text-[12px]">
+                <button className="rounded-md border border-slate-200 px-2 py-1">
+                  All (8)
+                </button>
+                <button className="rounded-md border border-slate-200 px-2 py-1">
+                  Jobs (3)
+                </button>
+                <button className="rounded-md border border-slate-200 px-2 py-1">
+                  Interviews (3)
+                </button>
+                <button className="rounded-md border border-slate-200 px-2 py-1">
+                  Candidates (2)
+                </button>
+              </div>
+
+              <div className="grid gap-4">
+                {activity.map((a, i) => (
+                  <div key={i} className="rounded-xl border border-slate-200 p-3">
+                    <div className="flex items-start gap-3">
+                      <Image
+                        src={a.avatar}
+                        alt=""
+                        width={36}
+                        height={36}
+                        className="rounded-full"
+                      />
+                      <div className="min-w-0">
+                        <div className="mb-1 text-[10px]">
+                          <span className="rounded bg-slate-100 px-1.5 py-[2px]">
+                            {a.tag}
+                          </span>
+                        </div>
+                        <div className="text-[13px] font-medium leading-5">
+                          {a.title}
+                        </div>
+                        <div className="mt-1 text-[12px] text-slate-600">
+                          {a.body}
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
+                          <span>by {a.by}</span>
+                          <span>{a.time}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button className="mt-4 w-full rounded-xl border border-slate-200 py-2 text-[13px]">
+                View All Activities →
+              </button>
+            </div>
+          </aside>
         </div>
       </main>
     </div>
   );
 }
+
