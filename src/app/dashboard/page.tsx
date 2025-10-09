@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+
 import Image from "next/image";
 import Sidebar from "../../components/Sidebar";
 import SearchBar from "../../components/SearchBar";
@@ -112,27 +113,40 @@ export default function DashboardPage() {
       }
     });
   }
+
   const candidateSources = [
     { name: "LinkedIn", sub: "2.3M profiles" },
     { name: "GitHub", sub: "890K profiles" },
     { name: "News", sub: "45K profiles" },
     { name: "Conferences", sub: "12K profiles" },
   ];
+
+  const [selectedCandidateSources, setSelectedCandidateSources] = useState<string[]>([]);
+
+  function handleCandidateSourceChange(name: string) {
+    setSelectedCandidateSources((prev: string[]) => {
+      if (prev.includes(name)) {
+        return prev.filter((n: string) => n !== name);
+      } else {
+        return [...prev, name];
+      }
+    });
+  }
   // People images (spaces are URL-encoded)
   const headshots = {
     sarah:
-      "/assets/loginpage/dashboard/People/sarah%20chen.jpg",
+      "/assets/dashboard/People/1af2086220affecd5f498aeca93f64918a91bf86.jpg",
     alex:
-      "/assets/loginpage/dashboard/People/alex%20rodriguez.jpg",
+      "/assets/dashboard/People/30a03b20d0d79bd9c491d22b6f3398fcaedf2780.jpg",
     emma:
-      "/assets/loginpage/dashboard/People/emma%20thompson.jpg",
+      "/assets/dashboard/People/389d48c3df5ee8b67ef377543c9b31f0e430e2a6.jpg",
     james:
-      "/assets/loginpage/dashboard/People/james%20wilson.jpg",
+      "/assets/dashboard/People/65be568fc2c1207c7799d895e6d7cb113b985966.jpg",
     maria:
-      "/assets/loginpage/dashboard/People/maria%20garcia.jpg",
+      "/assets/dashboard/People/6a98e81b28b333039b432776eb354412dfc36db6.jpg",
     // extra generic (kept for activity feed variety)
     extra:
-      "/assets/loginpage/dashboard/People/1af2086220affecd5f498aeca93f64918a91bf86.jpg",
+      "/assets/dashboard/People/fd3d4c48a8b689cbbfb343fe22651fcb4dc1c2e0.jpg",
   } as const;
 
   const stats = [
@@ -229,9 +243,9 @@ export default function DashboardPage() {
         </div>
 
         {/* left (cards + schedule) | right (activity) */}
-        <div className="mt-6 grid grid-cols-[1fr_360px] gap-5 max-[1024px]:grid-cols-1">
+        <div className="mt-6 grid grid-cols-[1fr_360px] gap-5 max-[1200px]:grid-cols-1">
           {/* LEFT: two cards wide; schedule full width directly under them */}
-          <div className="grid grid-cols-2 gap-5 max-[760px]:grid-cols-1">
+          <div className="grid grid-cols-2 gap-5 max-[900px]:grid-cols-1 max-[1200px]:order-1">
             {/* Job Search for Candidate */}
             <SectionCard
               title="Job Search for Candidate"
@@ -278,10 +292,11 @@ export default function DashboardPage() {
                 </div>
                 <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
                   <Image
-                    src="/assets/loginpage/dashboard/vectors/search.svg"
+                    src="/assets/dashboard/vectors/search.svg"
                     alt=""
                     width={16}
                     height={16}
+                    className="invert"
                   />
                   Find Matching Jobs
                 </button>
@@ -340,10 +355,11 @@ export default function DashboardPage() {
 
                 <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
                   <Image
-                    src="/assets/loginpage/dashboard/vectors/play.svg"
+                    src="/assets/dashboard/vectors/play.svg"
                     alt=""
                     width={16}
                     height={16}
+                    className="invert"
                   />
                   Run Ranking
                 </button>
@@ -378,7 +394,11 @@ export default function DashboardPage() {
                         type="checkbox"
                         id={`candidate-source-${idx}`}
                         className="accent-[#0b1227]"
-                        style={{ pointerEvents: 'none' }}
+                        checked={selectedCandidateSources.includes(s.name)}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          handleCandidateSourceChange(s.name);
+                        }}
                       />
                       <div>
                         <div className="font-medium">{s.name}</div>
@@ -390,17 +410,22 @@ export default function DashboardPage() {
 
                 <div className="text-[11px] text-slate-500">
                   Active Sources{" "}
-                  <span className="ml-2 rounded-md bg-slate-100 px-2 py-[2px]">
-                    LinkedIn
-                  </span>
+                  {selectedCandidateSources.length === 0 ? null : (
+                    selectedCandidateSources.map((name, i) => (
+                      <span key={name} className={`ml-${i > 0 ? 1 : 2} rounded-md bg-slate-100 px-2 py-[2px]`}>
+                        {name}
+                      </span>
+                    ))
+                  )}
                 </div>
 
                 <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
                   <Image
-                    src="/assets/loginpage/dashboard/vectors/search.svg"
+                    src="/assets/dashboard/vectors/search.svg"
                     alt=""
                     width={16}
                     height={16}
+                    className="invert"
                   />
                   Search Candidates
                 </button>
@@ -459,12 +484,13 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                <button className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
                   <Image
                     src="/assets/dashboard/vectors/upload.svg"
                     alt=""
                     width={16}
                     height={16}
+                    className="invert"
                   />
                   Generate and Post
                 </button>
@@ -472,19 +498,19 @@ export default function DashboardPage() {
             </SectionCard>
 
             {/* Interview Schedule (FULL WIDTH, right under the four cards) */}
-            <div className="col-span-2">
+            <div className="col-span-2 max-[900px]:col-span-1 max-[1200px]:order-2">
               <div className="rounded-2xl border border-slate-200 bg-white p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-[15px] font-semibold">
                     <Image
-                      src="/assets/loginpage/dashboard/vectors/interview.svg"
+                      src="/assets/dashboard/vectors/interview.svg"
                       alt=""
                       width={18}
                       height={18}
                     />
                     Interview Schedule
                   </div>
-                  <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-[12px]">
+                  <button className="rounded-lg bg-[#0b1227] text-white px-3 py-1.5 text-[12px] hover:bg-[#0f1a38]">
                     Open Calendar ↗
                   </button>
                 </div>
@@ -568,10 +594,17 @@ export default function DashboardPage() {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-[12px]">
+                        <button className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#0b1227] text-white px-3 py-1.5 text-[12px] hover:bg-[#0f1a38]">
+                          <Image
+                            src="/assets/dashboard/vectors/videocall.svg"
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="invert"
+                          />
                           Join
                         </button>
-                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-[12px]">
+                        <button className="rounded-lg bg-[#0b1227] text-white px-3 py-1.5 text-[12px] hover:bg-[#0f1a38]">
                           Actions
                         </button>
                       </div>
@@ -591,29 +624,29 @@ export default function DashboardPage() {
           </div>
 
           {/* RIGHT: Recent Activity */}
-          <aside className="space-y-5 max-[1024px]:order-first max-[1024px]:sticky max-[1024px]:top-4">
+          <aside className="space-y-5 max-[1200px]:order-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
-              <div className="mb-3 flex items-center gap-2 text-[15px] font-semibold">
+              <div className="mb-3 flex items-center gap-2 text-[17px] font-semibold">
                 <Image
-                  src="/assets/loginpage/dashboard/vectors/analytics.svg"
+                  src="/assets/dashboard/vectors/analytics.svg"
                   alt=""
-                  width={18}
-                  height={18}
+                  width={20}
+                  height={20}
                 />
                 Recent Activity
               </div>
 
-              <div className="mb-3 flex items-center gap-2 text-[12px]">
-                <button className="rounded-md border border-slate-200 px-2 py-1">
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px]">
+                <button className="rounded-md bg-[#0b1227] text-white px-2.5 py-1 font-medium">
                   All (8)
                 </button>
-                <button className="rounded-md border border-slate-200 px-2 py-1">
+                <button className="rounded-md bg-white border border-slate-200 px-2.5 py-1">
                   Jobs (3)
                 </button>
-                <button className="rounded-md border border-slate-200 px-2 py-1">
+                <button className="rounded-md bg-white border border-slate-200 px-2.5 py-1">
                   Interviews (3)
                 </button>
-                <button className="rounded-md border border-slate-200 px-2 py-1">
+                <button className="rounded-md bg-white border border-slate-200 px-2.5 py-1">
                   Candidates (2)
                 </button>
               </div>
@@ -621,29 +654,35 @@ export default function DashboardPage() {
               <div className="grid gap-4">
                 {activity.map((a, i) => (
                   <div key={i} className="rounded-xl border border-slate-200 p-3">
+                    <div className="mb-2 text-[11px]">
+                      <span className={`rounded px-2 py-[3px] font-medium ${
+                        a.tag === "candidate" 
+                          ? "bg-blue-50 text-blue-600" 
+                          : a.tag === "interview"
+                          ? "bg-purple-50 text-purple-600"
+                          : "bg-green-50 text-green-600"
+                      }`}>
+                        {a.tag.charAt(0).toUpperCase() + a.tag.slice(1)}
+                      </span>
+                    </div>
                     <div className="flex items-start gap-3">
                       <Image
                         src={a.avatar}
                         alt=""
-                        width={36}
-                        height={36}
+                        width={40}
+                        height={40}
                         className="rounded-full"
                       />
-                      <div className="min-w-0">
-                        <div className="mb-1 text-[10px]">
-                          <span className="rounded bg-slate-100 px-1.5 py-[2px]">
-                            {a.tag}
-                          </span>
-                        </div>
-                        <div className="text-[13px] font-medium leading-5">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[14px] font-semibold leading-5">
                           {a.title}
                         </div>
-                        <div className="mt-1 text-[12px] text-slate-600">
+                        <div className="mt-1 text-[13px] text-slate-600">
                           {a.body}
                         </div>
-                        <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
+                        <div className="mt-2 flex items-center justify-between text-[12px] text-slate-500">
                           <span>by {a.by}</span>
-                          <span>{a.time}</span>
+                          <span className="text-cyan-500">{a.time}</span>
                         </div>
                       </div>
                     </div>
@@ -651,7 +690,7 @@ export default function DashboardPage() {
                 ))}
               </div>
 
-              <button className="mt-4 w-full rounded-xl border border-slate-200 py-2 text-[13px]">
+              <button className="mt-4 w-full rounded-xl border border-slate-200 py-2 text-[14px] font-semibold">
                 View All Activities →
               </button>
             </div>
