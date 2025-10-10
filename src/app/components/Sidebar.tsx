@@ -1,19 +1,30 @@
 
 import Image from "next/image";
 
-function SidebarItem({
-  icon,
-  label,
-  active = false,
-}: {
+type SidebarItemProps = {
   icon: string;
   label: string;
   active?: boolean;
-}) {
+};
+
+const SidebarItem = ({ icon, label, active = false }: SidebarItemProps) => {
+  let onClick;
+  if (label === "Jobs") {
+    onClick = () => window.location.href = '/jobsearch';
+  } else if (label === "Candidates") {
+    onClick = () => window.location.href = '/candidatesearch';
+  } else if (label === "Interviews") {
+    onClick = () => window.location.href = '/interviewschedule';
+  } else if (label === "Analytics") {
+    onClick = () => window.location.href = '/recentactivity';
+  } else if (label === "Logout") {
+    onClick = () => window.location.href = '/login';
+  }
   return (
     <button
       className={`group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[14px] transition-colors duration-200
         ${active ? "bg-[#0b1227] text-white" : "text-[#0f172a] hover:bg-[#0b1227] hover:text-white"}`}
+      {...(onClick ? { onClick } : {})}
     >
       <span className="inline-grid h-5 w-5 place-items-center">
         <Image
@@ -27,7 +38,7 @@ function SidebarItem({
       <span className="font-medium">{label}</span>
     </button>
   );
-}
+};
 
 export default function Sidebar() {
   return (

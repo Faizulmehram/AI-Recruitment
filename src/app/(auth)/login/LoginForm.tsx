@@ -2,15 +2,19 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus("sending");
-    await new Promise(r => setTimeout(r, 500)); // TODO: replace with real auth
-    setStatus("done");
+  e.preventDefault();
+  setStatus("sending");
+  await new Promise(r => setTimeout(r, 500)); // TODO: replace with real auth
+  setStatus("done");
+  router.push("/dashboard");
   }
 
   return (
@@ -28,10 +32,25 @@ export default function LoginForm() {
           <label htmlFor="password" className="block text-xs sm:text-[0.81rem] font-medium text-gray-700">Password</label>
           <a href="#" className="text-xs sm:text-[0.72rem] text-[#0ad3f2] hover:underline">Forgot Password?</a>
         </div>
-        <input
-          id="password" name="password" type="password" required placeholder="Enter your password"
-          className="mt-1.5 sm:mt-2 w-full rounded-md border border-gray-300 px-3 py-2 sm:px-[0.81rem] sm:py-[0.63rem] text-sm sm:text-[0.81rem] focus:ring-2 focus:ring-gray-200"
-        />
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            placeholder="Enter your password"
+            className="mt-1.5 sm:mt-2 w-full rounded-md border border-gray-300 px-3 py-2 sm:px-[0.81rem] sm:py-[0.63rem] text-sm sm:text-[0.81rem] focus:ring-2 focus:ring-gray-200 pr-10"
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs sm:text-sm px-1 py-0.5"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
       </div>
 
       <label className="inline-flex items-center text-xs sm:text-[0.81rem] text-gray-700">

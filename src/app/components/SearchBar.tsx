@@ -19,8 +19,8 @@ export default function SearchBar() {
   <button type="button" className="bg-[#0a1733] hover:bg-[#0a1733] text-white px-5 py-2.5 text-[15px] font-medium rounded-[10px] transition" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Find Job</button>
       </div>
     <div className="flex gap-2 flex-shrink-0">
-  <button type="button" className="bg-white text-black px-5 py-2.5 text-[15px] font-medium rounded-[10px] border border-gray-300 hover:bg-gray-200 transition" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Find Candidate</button>
-  <button type="button" className="bg-white text-black px-5 py-2.5 text-[15px] font-medium rounded-[10px] border border-gray-300 hover:bg-gray-200 transition" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>Schedule Interview</button>
+  <button type="button" className="bg-white text-black px-5 py-2.5 text-[15px] font-medium rounded-[10px] border border-gray-300 hover:bg-gray-200 transition" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }} onClick={() => window.location.href = '/candidatesearch'}>Find Candidate</button>
+  <button type="button" className="bg-white text-black px-5 py-2.5 text-[15px] font-medium rounded-[10px] border border-gray-300 hover:bg-gray-200 transition" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }} onClick={() => window.location.href = '/interviewschedule'}>Schedule Interview</button>
       </div>
     </div>
   );

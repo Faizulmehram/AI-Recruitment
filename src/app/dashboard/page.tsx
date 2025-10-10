@@ -290,7 +290,10 @@ export default function DashboardPage() {
                     </form>
                   </div>
                 </div>
-                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                <button
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]"
+                  onClick={() => window.location.href = '/jobsearch'}
+                >
                   <Image
                     src="/assets/dashboard/vectors/search.svg"
                     alt=""
@@ -353,7 +356,10 @@ export default function DashboardPage() {
                   </form>
                 </div>
 
-                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                <button
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]"
+                  onClick={() => window.location.href = '/jobmatching'}
+                >
                   <Image
                     src="/assets/dashboard/vectors/play.svg"
                     alt=""
@@ -383,16 +389,16 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  {candidateSources.map((s, idx) => (
+                  {candidateSources.map((s) => (
                     <label
                       key={s.name}
-                      htmlFor={`candidate-source-${idx}`}
+                      htmlFor={`candidate-source-${s.name}`}
                       className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-3 text-[13px] shadow-[0_1px_0_#eef2f7] cursor-pointer transition hover:bg-slate-100 hover:scale-[1.03]"
                       style={{ userSelect: 'none' }}
                     >
                       <input
                         type="checkbox"
-                        id={`candidate-source-${idx}`}
+                        id={`candidate-source-${s.name}`}
                         className="accent-[#0b1227]"
                         checked={selectedCandidateSources.includes(s.name)}
                         onChange={(e) => {
@@ -419,7 +425,10 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                <button
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]"
+                  onClick={() => window.location.href = '/candidatesearch'}
+                >
                   <Image
                     src="/assets/dashboard/vectors/search.svg"
                     alt=""
@@ -447,16 +456,16 @@ export default function DashboardPage() {
                   Channels
                 </div>
                   <div className="grid grid-cols-2 gap-3">
-                    {channelOptions.map((c, idx) => (
+                    {channelOptions.map((c) => (
                       <label
                         key={c.label}
-                        htmlFor={`channel-checkbox-${idx}`}
+                        htmlFor={`channel-checkbox-${c.label}`}
                         className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 cursor-pointer shadow-[0_1px_0_#eef2f7] transition hover:bg-slate-100 hover:scale-[1.03]"
                         style={{ userSelect: 'none' }}
                       >
                         <input
                           type="checkbox"
-                          id={`channel-checkbox-${idx}`}
+                          id={`channel-checkbox-${c.label}`}
                           className="accent-[#0b1227]"
                           checked={selectedChannels.includes(c.label)}
                           onChange={() => handleChannelChange(c.label)}
@@ -484,7 +493,10 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                <button className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]">
+                <button
+                  className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1227] px-4 py-2.5 text-[13px] text-white hover:bg-[#0f1a38]"
+                  onClick={() => window.location.href = '/jobapplicationpost'}
+                >
                   <Image
                     src="/assets/dashboard/vectors/upload.svg"
                     alt=""
@@ -652,8 +664,8 @@ export default function DashboardPage() {
               </div>
 
               <div className="grid gap-4">
-                {activity.map((a, i) => (
-                  <div key={i} className="rounded-xl border border-slate-200 p-3">
+                {activity.map((a) => (
+                  <div key={a.title + a.time} className="rounded-xl border border-slate-200 p-3">
                     <div className="mb-2 text-[11px]">
                       <span className={`rounded px-2 py-[3px] font-medium ${
                         a.tag === "candidate" 
