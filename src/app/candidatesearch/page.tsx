@@ -30,7 +30,7 @@ function Button({ children, variant = "ghost", className = "", ...props }: React
   );
 }
 
-function CheckboxRow({ label, sub, checked, onChange }: any) {
+function CheckboxRow({ label, sub, checked, onChange }: { label: string; sub?: string; checked: boolean; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
   return (
     <label className="flex items-center justify-between py-2">
       <div className="flex items-center gap-3">
