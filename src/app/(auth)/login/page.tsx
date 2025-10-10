@@ -21,30 +21,30 @@ export default function LoginPage() {
         {/* Dull overlay for entire image - 20% */}
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute bottom-8 left-8 right-8 text-white pb-[10%] pl-[7%]">
-          <p className="w-[70%] text-[29.75px] leading-relaxed font-inter font-semibold">
+          <p className="w-[70%] text-lg sm:text-xl lg:text-[29.75px] leading-relaxed font-inter font-semibold">
             Smarter recruiting, powered by AI — find the right jobs, candidates, and matches in seconds.
           </p>
         </div>
       </section>
 
       {/* RIGHT: form - 60% */}
-      <section className="flex items-center justify-center py-12 px-6 sm:px-10">
-        <div className="w-[531px] h-[838px] space-y-11">
-          <div className="flex justify-center mb-6 mt-8">
+      <section className="flex items-center justify-center py-6 sm:py-12 px-4 sm:px-6 lg:px-10">
+        <div className="w-full max-w-[531px] space-y-6 sm:space-y-8 lg:space-y-11">
+          <div className="flex justify-center mb-4 sm:mb-6 mt-4 sm:mt-8">
             {/* Replace with your logo if available */}
-            <Image src={image} alt="Logo" width={65} height={65} />
+            <Image src={image} alt="Logo" width={50} height={50} className="sm:w-[65px] sm:h-[65px]" />
           </div>
 
-          <div className="text-center space-y-2">
-            <h1 className="text-[1.8rem] font-bold">Welcome Back</h1>
-            <p className="text-[0.9rem] text-black">Sign in to your account</p>
+          <div className="text-center space-y-1 sm:space-y-2">
+            <h1 className="text-2xl sm:text-[1.8rem] font-bold">Welcome Back</h1>
+            <p className="text-sm sm:text-[0.9rem] text-black">Sign in to your account</p>
           </div>
 
           <LoginForm />
 
-          <p className="mt-10 text-center text-[0.95rem] text-gray-600">
+          <p className="mt-6 sm:mt-10 text-center text-sm sm:text-[0.95rem] text-gray-600">
             Need an account?{" "}
-            <Link href="/register" className="text-[#0ad3f2] hover:underline font-medium text-[0.95rem]">Create a new account</Link>
+            <Link href="/register" className="text-[#0ad3f2] hover:underline font-medium">Create a new account</Link>
           </p>
         </div>
       </section>
