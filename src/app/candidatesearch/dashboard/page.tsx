@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import Image from "next/image";
-import Sidebar from "../components/Sidebar";
-import SearchBar from "../components/SearchBar";
+import Sidebar from "../../components/Sidebar";
+import SearchBar from "../../components/SearchBar";
 
 /* ---------- small UI helpers ---------- */
 function SidebarItem({
