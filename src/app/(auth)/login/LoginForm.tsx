@@ -38,7 +38,6 @@ export default function LoginForm() {
         <input type="checkbox" className="mr-2 sm:mr-[0.63rem] h-4 w-4 sm:h-[0.99rem] sm:w-[0.99rem] rounded border-gray-300" />
         Remember me
       </label>
-
       <button
         type="submit"
         className="w-full rounded-md bg-[#0B1B2B] px-3 py-2.5 sm:px-[0.81rem] sm:py-[0.63rem] text-sm sm:text-[0.81rem] font-semibold text-white hover:brightness-110"
